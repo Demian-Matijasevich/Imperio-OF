@@ -401,3 +401,589 @@
   /* opcional: bloquear scroll del body cuando el menú está abierto */
   body.menu-open{ overflow:hidden; }
 }
+
+/* ====== Pruebas / Carrusel ====== */
+.proof{
+  background:#000; color:#fff;
+  padding: clamp(36px, 6vw, 72px) 0;
+}
+.proof .proof-head{ text-align:center; margin: 0 0 18px; }
+.proof .proof-title{
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 800; letter-spacing:.02em; text-transform: uppercase;
+  line-height:1.15; margin:0; 
+  font-size: clamp(18px, 3.4vw, 28px);
+}
+.proof .proof-title span{
+  font-weight:700; opacity:.85; font-size: .9em;
+}
+
+/* Carrusel solo dedo (scroll-snap) */
+.stories{
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.stories-track{
+  display:flex; gap: clamp(12px, 2vw, 18px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;  /* Firefox */
+  padding: 6px 2px;
+}
+.stories-track::-webkit-scrollbar{ display:none; }  /* WebKit */
+
+/* Card 9:16, sin bordes redondeados */
+.story{
+  flex: 0 0 auto;
+  
+  width: clamp(220px, 28vw, 360px);
+  aspect-ratio: 9 / 16;
+  background:#111; border-radius:0; overflow:hidden;
+  scroll-snap-align: start;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+.story img{
+  width:100%; height:100%; object-fit:cover; object-position:center;
+  display:block; filter:saturate(.95) contrast(1.05);
+}
+
+/* Bloque de dinero + checklist + gráficas */
+.money-proof{
+  max-width: 1200px; margin: clamp(28px, 5vw, 48px) auto 0; padding: 0 24px;
+}
+.money-title{
+  text-align:center;
+  font-family:'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-weight:800; text-transform:uppercase; letter-spacing:.02em;
+  margin:0 0 10px; line-height:1.2;
+  font-size: clamp(18px, 3vw, 24px);
+  
+}
+.checks{
+  list-style:none; margin:0 auto 16px; padding:0;
+  max-width: 780px; text-align:center;
+  font-weight:600; letter-spacing:.01em;
+}
+.checks li{ margin:6px 0; }
+
+/* Dos gráficas lado a lado (stack en mobile) */
+.graphs{
+  display:grid; gap:14px;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 980px; margin: 0 auto;
+}
+.graph{background:#0b0b0b; border:1px solid rgba(255,255,255,.1); box-shadow:0 14px 28px rgba(0,0,0,.28);}
+.graph img{ display:block; width:100%; height:auto; }
+
+@media (max-width: 900px){
+  .story{ width: clamp(70vw, 78vw, 86vw); }
+  .graphs{ grid-template-columns: 1fr; }
+}
+/* ====== Carrusel “stories” PRO ====== */
+.stories{
+  position:relative;
+  max-width:1200px;
+  margin: 0 auto;
+  padding: 0 24px 10px;
+}
+
+/* Fades laterales (pista de que hay swipe en mobile) */
+.stories::before,
+.stories::after{
+  content:"";
+  position:absolute;
+  top:0; bottom:0;
+  width:min(70px,10vw);
+  pointer-events:none;
+  z-index:2;
+  background:linear-gradient(to right, #000 0%, rgba(0,0,0,0) 100%);
+}
+.stories::after{
+  right:0;
+  transform:scaleX(-1);
+}
+.stories::before{ left:0; }
+
+/* Pista — mobile: swipe; desktop: sin scroll y centrado */
+.stories-track{
+  display:flex;
+  gap: clamp(16px, 2.2vw, 28px);
+  overflow-x: auto;                /* mobile swipe */
+  scroll-snap-type: x mandatory;
+  scroll-padding: 24px;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 2px 12px;
+  scrollbar-width: none;           /* Firefox */
+}
+.stories-track::-webkit-scrollbar{ display:none; }
+
+/* CARD: relación 3:4 (más natural p/fotos verticales) */
+.story{
+  --card-w: clamp(240px, 26vw, 360px);
+  flex: 0 0 auto;
+  width: var(--card-w);
+  aspect-ratio: 3 / 4;             /* << antes 9/16; ahora se ve más */
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 18px 40px rgba(0,0,0,.38);
+  overflow:hidden;
+  scroll-snap-align: center;
+}
+.story img{
+  width:100%; height:100%;
+  object-fit: cover;
+  /* centrado con un pelín de foco hacia arriba (caras) */
+  object-position: 50% 20%;
+  display:block;
+  filter: saturate(.98) contrast(1.05);
+}
+
+/* Desktop: mostrar 3 centradas sin scroll */
+@media (min-width: 1024px){
+  .stories::before,
+  .stories::after{ display:none; } /* sin fades */
+  .stories-track{
+    overflow: visible;              /* no scroll en escritorio */
+    justify-content: center;
+  }
+  .story{
+    width: min(28vw, 360px);
+    transition: transform .28s cubic-bezier(.22,.61,.36,1),
+                box-shadow .28s ease;
+  }
+  .story:hover{
+    transform: translateY(-6px);
+    box-shadow:0 24px 60px rgba(0,0,0,.5);
+  }
+}
+
+/* Si querés que en pantallas muy chicas las cards respiren más */
+@media (max-width: 480px){
+  .story{ width: clamp(72vw, 84vw, 88vw); }
+}
+/* ===== “¿Te identificás?” – versión PRO ===== */
+.pain-box{
+  margin: clamp(28px,6vw,56px) 0 6px;
+}
+.pain-head{
+  text-align:center;
+  font-family: var(--headline);
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#111;
+  margin:0 0 18px;
+  font-size: clamp(14px,1.6vw,15px);
+  opacity:.85;
+}
+
+/* Grid 2x2 desktop / 1x4 mobile */
+.pain-grid{
+  display:grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: clamp(16px,2.2vw,24px);
+}
+
+/* Card “cara”: capas de luz + borde fino + sombra profunda */
+.pain-card{
+  position:relative;
+  isolation:isolate;                     /* permite overlays internos */
+  background:
+    radial-gradient(120% 140% at 0% 0%, #181517 0%, #0e0e0f 55%, #0a0a0a 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 28px 60px rgba(0,0,0,.28),
+    0 10px 24px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  padding: clamp(22px,3.2vw,34px);
+  color:#fff;
+  transition: transform .28s cubic-bezier(.22,.61,.36,1), 
+              box-shadow .28s ease, 
+              border-color .28s ease, 
+              filter .28s ease;
+}
+
+/* brillo sutil en el borde superior (cara) */
+.pain-card::before{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), transparent 28%);
+  mix-blend-mode: screen; opacity:.25; pointer-events:none;
+}
+
+/* barra/acento superior izquierda (detalle editorial) */
+.pain-card::after{
+  content:"";
+  position:absolute; left:0; top:0; height:3px; width:42%;
+  background: linear-gradient(90deg, rgba(255,255,255,.65), rgba(255,255,255,0));
+  opacity:.55; pointer-events:none;
+}
+
+.pain-card p{
+  margin:0;
+  font-family:'Montserrat', var(--text);
+  font-weight:800;
+  line-height:1.28;
+  letter-spacing:.012em;
+  text-wrap:balance;
+  font-size: clamp(18px,2.4vw,26px);
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.35)); /* mejora contraste en blanco */
+}
+
+/* micro-interacción */
+@media (hover:hover){
+  .pain-card:hover{
+    transform: translateY(-6px);
+    box-shadow:
+      0 34px 80px rgba(0,0,0,.38),
+      0 16px 32px rgba(0,0,0,.22),
+      inset 0 1px 0 rgba(255,255,255,.07);
+    border-color: rgba(255,255,255,.14);
+    filter: saturate(1.02);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 900px){
+  .pain-grid{ grid-template-columns: 1fr; }
+  .pain-card p{ font-size: clamp(18px,5.4vw,22px); }
+}
+/* ===== Reaseguro + CTA ===== */
+.reassure-cta{
+  background:
+    radial-gradient(140% 120% at 10% 0%, #ffffff 0%, #ffffff 38%, #ffffff 100%);
+  color:#000000;
+  padding: clamp(36px, 6vw, 72px) 0;
+  margin-top: 30px;
+  border-top:1px solid rgb(0, 0, 0);
+  border-bottom:1px solid rgb(0, 0, 0);
+  border-left:1px solid rgb(0, 0, 0);
+  border-right:1px solid rgb(0, 0, 0);
+}
+.reassure-wrap{
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 24px;
+  filter: drop-shadow(0 18px 40px rgba(0,0,0,.35));
+}
+.reassure-kicker{
+  font-family:'Montserrat', var(--text);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  opacity:.9;
+  margin: 0 0 8px;
+  font-size: 12px;
+}
+.reassure-title{
+  font-family: var(--headline);
+  font-weight:800;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+  line-height:1.15;
+  margin: 0 0 18px;
+  font-size: clamp(22px, 3.2vw, 36px);
+}
+.reassure-title span{ font-style: italic; font-weight:800; text-transform:none; }
+
+/* Botón dorado de alto contraste */
+.btn-gold{
+  display:inline-flex; align-items:center; justify-content:center;
+  text-decoration:none;
+  font-family:'Montserrat', var(--text);
+  font-weight:800; letter-spacing:.04em; text-transform:uppercase;
+  padding: 14px 24px;
+  background: linear-gradient(180deg,#ffffff 0%, #ffffff 55%, #ffffff 100%);
+  color:#111; border:1px solid #000000;
+  box-shadow: 0 12px 26px rgba(0,0,0,.28);
+  transition: transform .24s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease, filter .24s ease;
+}
+.btn-gold:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 18px 44px rgba(0,0,0,.35);
+  filter: saturate(1.05);
+
+}
+
+/* ===== WINS / TESTIMONIOS ===== */
+.wins-wall{background: radial-gradient(120% 140% at 0% 0%, #2a2a2a 0%, #1b1b1b 45%, #0f0f0f 100%); color:#fff; padding: clamp(60px,9vw,140px) 0;}
+.wins-wall .container{max-width:1200px; margin:0 auto; padding:0 24px;}
+.wins-wall-kicker{
+  font-family:'Montserrat', var(--text);
+  text-transform:uppercase; letter-spacing:.14em; font-size:12px; opacity:.82;
+  display:block; margin-bottom:.35rem;
+}
+.wins-wall-title{
+  font-family:var(--headline); font-weight:800; letter-spacing:-.01em;
+  font-size:clamp(28px,3.8vw,48px); line-height:1.12; margin:0 0 18px;
+}
+.wins-wall-title em{font-style:italic; font-weight:800;}
+
+.wins-wall-grid{
+  display:grid; gap:clamp(14px,2vw,22px);
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  position:relative;
+}
+/* WIN cards: mostrar la captura completa, sin zoom */
+.wins-card{
+  background:#0f0f0f;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 18px 40px rgba(0,0,0,.40);
+  aspect-ratio: 9 / 16;
+  overflow:hidden;
+  margin:0;
+  padding:8px;                /* aire para que la imagen no toque el borde */
+}
+
+.wins-card img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit: contain;        /* <- antes era cover (zoomeaba) */
+  background:#0b0b0b;         /* relleno detrás de la captura */
+  image-rendering:-webkit-optimize-contrast; /* mejora nitidez en iOS/WebKit */
+  transform: translateZ(0);   /* evita glitches en algunos móviles */
+}
+
+.wins-card:hover{
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,.16);
+  box-shadow:0 24px 60px rgba(0,0,0,.55);
+}
+
+/* “Recorte” inicial + fade para sugerir que hay más */
+.wins-wall-grid.clip{
+  max-height: 72vh;                 /* altura visible inicial */
+  overflow: hidden;
+}
+.wins-wall-grid.clip::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:120px;
+  background:linear-gradient(to top, rgba(11,11,11,1) 0%, rgba(11,11,11,0) 100%);
+  pointer-events:none;
+}
+.wins-wall-grid.is-open{max-height:none;}
+.wins-wall-grid.is-open::after{display:none;}
+
+.wins-wall-ctas{
+  display:flex; gap:16px; justify-content:center; align-items:center;
+  margin-top: clamp(18px,3vw,28px);
+}
+
+/* Botón fantasma y botón blanco */
+.btn-ghost{
+  background:transparent; color:#fff; border:1px solid rgba(255,255,255,.6);
+  font-family:'Montserrat', var(--text); font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  padding:14px 22px; cursor:pointer;
+  transition:background .25s ease, color .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+.btn-ghost:hover{background:#fff; color:#000; border-color:#fff; transform:translateY(-2px); box-shadow:0 12px 26px rgba(255,255,255,.18);}
+
+.btn-white{
+  display:inline-flex; align-items:center; justify-content:center; text-decoration:none;
+  background:#fff; color:#000; border:1px solid #fff;
+  font-family:'Montserrat', var(--text); font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  padding:14px 22px; transition: transform .26s cubic-bezier(.22,.61,.36,1), box-shadow .26s ease, filter .26s ease;
+}
+.btn-white:hover{ transform: translateY(-2px); box-shadow:0 14px 28px rgba(255,255,255,.28); }
+
+@media (max-width: 980px){
+  .wins-wall-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width: 560px){
+  .wins-wall-grid{grid-template-columns:1fr;}
+  .btn-ghost, .btn-white{width:100%; text-align:center;}
+  .wins-wall-ctas{flex-direction:column;}
+}
+
+/* ===== Lightbox para WINS ===== */
+.lb{
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,.88);
+  display:none; /* se abre con .open */
+}
+.lb.open{ display:grid; place-items:center; }
+
+.lb-figure{
+  position:relative;
+  max-width:92vw; max-height:92vh;
+  display:grid; gap:10px;
+}
+#lb-img{
+  max-width:92vw; max-height:82vh;
+  width:auto; height:auto;
+  object-fit:contain;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  border:1px solid rgba(255,255,255,.15);
+  background:#000;
+}
+.lb-cap{
+  text-align:center; color:#ddd; opacity:.85;
+  font-size:.95rem;
+}
+
+.lb-close{
+  position:absolute; top:-12px; right:-12px;
+  width:40px; height:40px; border-radius:50%;
+  display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.07);
+  color:#fff; cursor:pointer;
+  backdrop-filter: blur(6px);
+}
+.lb-nav{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:space-between;
+  pointer-events:none;
+}
+.lb-nav button{
+  pointer-events:auto; cursor:pointer;
+  width:48px; height:72px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  color:#fff; font-size:22px;
+}
+.lb-nav .lb-prev{ margin-left:-64px; }
+.lb-nav .lb-next{ margin-right:-64px; }
+
+@media (max-width: 900px){
+  .lb-nav .lb-prev{ margin-left:6px; }
+  .lb-nav .lb-next{ margin-right:6px; }
+}
+
+/* Cursor de zoom en las cards */
+.wins-card img{ cursor: zoom-in; }
+/* --- Press banner: comportamiento móvil --- */
+@media (max-width: 640px){
+  .about-split .about-grid{ gap: 16px; }
+
+  /* La franja deja de ser absoluta y se muestra como bloque */
+  .about-split .press-banner{
+    position: static !important;
+    left: auto; right: auto; bottom: auto;
+    margin: 8px 0 0;
+    padding: 12px 16px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    background:#0f0f0f; color:#fff;       /* conserva el look */
+    justify-content: center;              /* ya venía centrado */
+  }
+}
+/* Full-bleed de la franja en móvil (edge-to-edge) */
+@media (max-width: 640px){
+  .about-split .press-banner{
+    position: static;                 /* ya la tenés debajo del texto */
+    width: 100vw;                     /* ocupa todo el ancho de la ventana */
+    margin-left: calc(50% - 50vw);    /* saca el padding del container (full bleed) */
+    margin-right: calc(50% - 50vw);
+    margin-top: 16px;
+    border-radius: 0;
+    padding-top: clamp(18px, 4.5vw, 28px);
+    padding-bottom: clamp(18px, 4.5vw, 28px);
+    padding-left: max(18px, env(safe-area-inset-left));   /* safe area iOS */
+    padding-right:max(18px, env(safe-area-inset-right));
+    box-shadow: 0 14px 28px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center;
+    gap: 28px;                         /* espacio entre etiquetas */
+  }
+  .about-split .press-banner .sep{ display:none; }         /* opcional: sin separador vertical */
+}
+/* ====== BEBAS NEUE (titular compacto) ====== */
+:root{
+  --hero-font: "Bebas Neue", sans-serif;
+  --hero-weight: 400;          /* Bebas usa un solo peso */
+  --hero-transform: uppercase; /* queda bien full caps */
+}
+.hero-title{
+  font-family: var(--hero-font);
+  font-weight: var(--hero-weight);
+  text-transform: var(--hero-transform);
+  letter-spacing: .04em;       /* sugerencia: un poquito de tracking */
+}
+
+/* Texto introductorio dentro de “Lo que obtenés” */
+.pillars .pillars-desc{
+  max-width: 860px;
+  margin: 0 auto 18px;        /* centrado y espacio inferior */
+  text-align: center;
+  color: #2b2b2b;
+  line-height: 1.75;
+  font-size: clamp(15px, 2vw, 18px);
+}
+
+/* Un poquito de aire antes de las tarjetas si hace falta */
+.pillar-grid{ margin-top: 10px; }
+/* Contenedor del precio puede alojar "ahora" y "antes" */
+.price-amount{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  font-family:'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+.price-now{
+  font-weight:800;
+  font-size: clamp(28px,4vw,40px);
+  line-height:1;
+}
+.price-was{
+  font-weight:800;
+  font-size: clamp(16px,2.2vw,22px);
+  color:#9a9a9a;
+  text-decoration: line-through;
+  opacity:.85;
+  transform: translateY(2px);
+}
+.price-card.highlight .price-was{ color:#cfcfcf; opacity:.9 }
+
+/* Mini contador para el plan de $600 */
+.mini-timer{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin-top:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff;
+  color:#111;
+  border:1px solid #e6e6e6;
+  font-family:'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  font-size:12px;
+}
+.price-card.highlight .mini-timer{
+  background:#0b0b0b;
+  color:#fff;
+  border-color:rgba(255,255,255,.22);
+}
+.mini-timer .count b{ font-weight:900; }
+/* ===== Ribbon (franja negra) arriba del card ===== */
+.price-card{ position:relative; overflow:hidden; }
+.price-card.has-ribbon{ padding-top:56px; } /* deja espacio para la franja */
+
+.price-ribbon{
+  position:absolute; inset:0 0 auto 0;    /* top:0; left:0; right:0 */
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:10px 14px;
+  background:#0b0b0b; color:#fff;
+  border-bottom:1px solid rgba(255,255,255,.10);
+  font-family:'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+.price-ribbon .ribbon-text{
+  font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.95; font-weight:800;
+}
+
+.price-ribbon .ribbon-count{
+  font-size:12px; letter-spacing:.02em; font-weight:800;
+}
+.price-ribbon .ribbon-count b{
+  font-weight:900; margin:0 2px;
+}
+
+/* Ajustes responsive */
+@media (max-width: 560px){
+  .price-card.has-ribbon{ padding-top:62px; }
+  .price-ribbon{ padding:12px 14px; }
+  .price-ribbon .ribbon-text{ font-size:11px; letter-spacing:.05em; }
+  .price-ribbon .ribbon-count{ font-size:11px; }
+}
